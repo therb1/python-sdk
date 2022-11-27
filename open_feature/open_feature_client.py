@@ -233,9 +233,8 @@ class OpenFeatureClient:
         if evaluation_context is None:
             evaluation_context = EvaluationContext()
 
-        evaluation_hooks, hook_hints = self.__extract_evaluation_options(
-            flag_evaluation_options
-        )
+        evaluation_hooks = evaluation_context.hooks
+        hook_hints = evaluation_context.hook_hints
 
         hook_context = HookContext(
             flag_key=flag_key,
@@ -245,7 +244,7 @@ class OpenFeatureClient:
             client_metadata=None,
             provider_metadata=None,
         )
-        # Todo add api level hooks
+        # TODO add api level hooks
         # https://github.com/open-feature/spec/blob/main/specification/sections/04-hooks.md#requirement-442
         # Hooks need to be handled in different orders at different stages
         # in the flag evaluation
@@ -254,9 +253,8 @@ class OpenFeatureClient:
             self.hooks + evaluation_hooks + self.provider.get_provider_hooks()
         )
         # after, error, finally: Provider, Invocation, Client, API
-        reversed_merged_hooks = (
-            self.provider.get_provider_hooks() + evaluation_hooks + self.hooks
-        )
+        reversed_merged_hooks = merged_hooks[:]
+        reversed_merged_hooks.reverse()
 
         try:
             # https://github.com/open-feature/spec/blob/main/specification/sections/03-evaluation-context.md
@@ -362,24 +360,3 @@ class OpenFeatureClient:
             raise TypeMismatchError()
 
         return value
-
-    def __extract_evaluation_options(
-        self, flag_evaluation_options: typing.Any
-    ) -> typing.Tuple[typing.List[Hook], MappingProxyType]:
-        evaluation_hooks: typing.List[Hook] = []
-        hook_hints: dict = {}
-
-        if flag_evaluation_options is dict:
-            if (
-                "hook_hints" in flag_evaluation_options
-                and flag_evaluation_options["hook_hints"] is dict
-            ):
-                hook_hints = dict(flag_evaluation_options["hook_hints"])
-
-            if (
-                "hooks" in flag_evaluation_options
-                and flag_evaluation_options["hooks"] is list
-            ):
-                evaluation_hooks = flag_evaluation_options["hooks"]
-
-        return (evaluation_hooks, MappingProxyType(hook_hints))
