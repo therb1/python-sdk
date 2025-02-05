@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.6](https://github.com/open-feature/python-sdk/compare/v0.7.5...v0.7.6) (2025-02-05)
+
+
+### 🧹 Chore
+
+* **deps:** update pre-commit hook pre-commit/mirrors-mypy to v1.15.0 ([#430](https://github.com/open-feature/python-sdk/issues/430)) ([fe0fea1](https://github.com/open-feature/python-sdk/commit/fe0fea1f7328bb97c6985628be2f5c11bae13f22))
+
 ## [0.7.5](https://github.com/open-feature/python-sdk/compare/v0.7.4...v0.7.5) (2025-01-31)
 
 
